@@ -1,19 +1,17 @@
 use image::GenericImageView;
+use image::DynamicImage;
 use std::env;
-
+use imageproc::contrast::adaptive_threshold;
 
 fn main() {
   let cwd = env::current_dir().unwrap();
   println!("The current directory is {}", cwd.as_os_str().to_str().unwrap().to_string());
-    // Use the open function to load an image from a Path.
-    // `open` returns a `DynamicImage` on success.
-
-    img_to_text("test/01.PNG");
-
+  img_to_text("test/03.PNG");
 }
 
 fn img_to_text(path: &str) {
-
+  // Use the open function to load an image from a Path.
+  // `open` returns a `DynamicImage` on success.
   let mut img = image::open(path).unwrap();
 
   img.thumbnail(1700,1700);
@@ -26,14 +24,21 @@ fn img_to_text(path: &str) {
   let width=img.width();
   let height = img.height();
 
-  let img2 = image::imageops::crop(&mut img,40,40,width-80,height-80);
-
-  // The dimensions method returns the images width and height.
+  let img2 = image::imageops::crop(&mut img,40,40,width-80,height-80).to_image();
   println!("crop dimensions {:?}", img2.dimensions());
+
+  let imgg = DynamicImage::ImageRgba8(img2).into_luma();
+  // The color method returns the image's `ColorType`.
+  // println!("{:?}", gray.color());
+
+//  = note: expected reference `&image::buffer_::ImageBuffer<image::color::Luma<u8>, Vec<u8>>`
+//  found reference `&ImageBuffer<Luma<u8>, Vec<u8>>`
+// = note: perhaps two different versions of crate `image` are being used?
+  let img3=adaptive_threshold(&imgg,1);
 
 
   // Write the contents of this image to the Writer in PNG format.
   //img.save("test/result.png").unwrap();
 
-  //img2.to_image().save("test/result.png").unwrap();
+  imgg.save("test/result.png").unwrap();
 }

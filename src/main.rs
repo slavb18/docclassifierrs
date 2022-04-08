@@ -1,18 +1,17 @@
-// use image::{self, imageops::*};
-
 use image::GenericImageView;
 use image::DynamicImage;
 use std::env;
 use imageproc::contrast::adaptive_threshold;
 
-use tesseract::ocr;
+// use tesseract::ocr;
+use tesseract::Tesseract;
 
 fn main() {
   let cwd = env::current_dir().unwrap();
   println!("The current directory is {}", cwd.as_os_str().to_str().unwrap().to_string());
+
   img_to_text("test/01.PNG");
-  let text = ocr("test/01.PNG", "rus").unwrap();
-  println!("ocr =  {}", text);
+
 }
 
 fn img_to_text(path: &str) {
@@ -47,4 +46,17 @@ fn img_to_text(path: &str) {
   //img.save("test/result.png").unwrap();
 
   img3.save("test/result.png").unwrap();
+
+  let tesseract = Tesseract::new(None, Some("rus")).unwrap();
+
+  let imgbuf=img3.as_raw();
+  let text = tesseract
+  // .set_image("test/01.PNG").unwrap()
+  .set_image_from_mem(&imgbuf).unwrap()
+  .recognize().unwrap()
+  .get_text().unwrap();
+
+  // let text = ocr("test/01.PNG", "rus").unwrap();
+   println!("ocr =  {}", text);
+
 }

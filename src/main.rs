@@ -9,6 +9,8 @@ use tesseract::Tesseract;
 extern crate dotenv;
 use dotenv::dotenv;
 
+use std::io::Cursor;
+
 fn main() {
   dotenv().ok();
   let cwd = env::current_dir().unwrap();
@@ -17,6 +19,7 @@ fn main() {
   img_to_text("test/01.PNG");
 
 }
+
 
 fn img_to_text(path: &str) {
   // Use the open function to load an image from a Path.
@@ -54,9 +57,17 @@ fn img_to_text(path: &str) {
 
   let tesseract = Tesseract::new(None, Some(&lang)).unwrap();
 
+  // let mut buf: Cursor<Vec<u8>> = Cursor::new(Vec::new());
+  // let mut stream = BufWriter::new(buf.as_mut());
+
+   let mut bytes = Vec::new();
+   img3.write_to(&mut Cursor::new(&mut bytes), image::ImageOutputFormat::Png);
+
+  // let mut buf = encode_png(&imgg).unwrap();
+
   let text = tesseract
   // .set_image("test/01.PNG").unwrap()
-  .set_image_from_mem(&img.into_rgb8() ).unwrap()
+  .set_image_from_mem(&bytes ).unwrap()
   .recognize().unwrap()
   .get_text().unwrap();
 

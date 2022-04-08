@@ -6,7 +6,11 @@ use imageproc::contrast::adaptive_threshold;
 // use tesseract::ocr;
 use tesseract::Tesseract;
 
+extern crate dotenv;
+use dotenv::dotenv;
+
 fn main() {
+  dotenv().ok();
   let cwd = env::current_dir().unwrap();
   println!("The current directory is {}", cwd.as_os_str().to_str().unwrap().to_string());
 
@@ -46,13 +50,13 @@ fn img_to_text(path: &str) {
   //img.save("test/result.png").unwrap();
 
   img3.save("test/result.png").unwrap();
+  let lang=env::var("apps.docclassiferrs.lang").unwrap();
 
-  let tesseract = Tesseract::new(None, Some("rus")).unwrap();
+  let tesseract = Tesseract::new(None, Some(&lang)).unwrap();
 
-  let imgbuf=img3.as_raw();
   let text = tesseract
   // .set_image("test/01.PNG").unwrap()
-  .set_image_from_mem(&imgbuf).unwrap()
+  .set_image_from_mem(&img.into_rgb8() ).unwrap()
   .recognize().unwrap()
   .get_text().unwrap();
 

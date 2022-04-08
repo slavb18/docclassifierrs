@@ -18,19 +18,21 @@ use opencv::{
   objdetect,
   imgproc,
   core,
-  types
+  types,
+  imgcodecs
 };
 
-fn main() {
+fn main()->Result<()>{
   dotenv().ok();
   let cwd = env::current_dir().unwrap();
   println!("The current directory is {}", cwd.as_os_str().to_str().unwrap().to_string());
   facedetect();
 
   img_to_text("test/01.PNG");
+  Ok(())
 }
 
-fn facedetect() {
+fn facedetect()->Result<()>{
    // TEST FACE DETECT
    let xml = "/usr/share/opencv4/haarcascades/haarcascade_frontalface_default.xml";
    let mut face_detector = objdetect::CascadeClassifier::new(xml)?;
@@ -49,6 +51,7 @@ fn facedetect() {
        core::Size::new(0, 0)
    )?;
    println!("{:?}", faces);
+   Ok(())
 }
 
 fn img_to_text(path: &str) {

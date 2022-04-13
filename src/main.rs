@@ -10,49 +10,18 @@ extern crate dotenv;
 use dotenv::dotenv;
 
 use std::io::Cursor;
+mod facedetect;
 
 
-use opencv::{
-  Result,
-  prelude::*,
-  objdetect,
-  imgproc,
-  core,
-  types,
-  imgcodecs
-};
-
-fn main()->Result<()>{
+fn main(){
   dotenv().ok();
   let cwd = env::current_dir().unwrap();
   println!("The current directory is {}", cwd.as_os_str().to_str().unwrap().to_string());
-  facedetect();
+  facedetect::facedetect("test/03.PNG");
 
   img_to_text("test/01.PNG");
-  Ok(())
 }
 
-fn facedetect()->Result<()>{
-   // TEST FACE DETECT
-   let xml = "/usr/share/opencv4/haarcascades/haarcascade_frontalface_default.xml";
-   let mut face_detector = objdetect::CascadeClassifier::new(xml)?;
-   let img = imgcodecs::imread(r"test/03.PNG", -1).unwrap(); // Issue over here
-   let mut gray = Mat::default();
-   imgproc::cvt_color(&img, &mut gray, imgproc::COLOR_BGR2GRAY, 0)?;
-   let mut faces = types::VectorOfRect::new();
-
-   face_detector.detect_multi_scale(
-       &gray,
-       &mut faces,
-       1.1,
-       10,
-       objdetect::CASCADE_SCALE_IMAGE,
-       core::Size::new(10, 10),
-       core::Size::new(0, 0)
-   )?;
-   println!("{:?}", faces);
-   Ok(())
-}
 
 fn img_to_text(path: &str) {
   // Use the open function to load an image from a Path.

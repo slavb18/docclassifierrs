@@ -28,6 +28,8 @@ fn img_to_text(path: &str) {
   // `open` returns a `DynamicImage` on success.
   let mut img = image::open(path).unwrap();
 
+  //  facedetect::facedetect(img.to_rgb8().to_vec());
+
 
   img.thumbnail(1700,1700);
 

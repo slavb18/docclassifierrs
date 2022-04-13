@@ -9,11 +9,14 @@ use opencv::{
   imgcodecs
 };
 
+// pub fn facedetect(buf: Vec<u8>)->Result<bool>{
 pub fn facedetect(path: &str)->Result<bool>{
   // TEST FACE DETECT
   let xml = "/usr/share/opencv4/haarcascades/haarcascade_frontalface_default.xml";
   let mut face_detector = objdetect::CascadeClassifier::new(xml)?;
   let img = imgcodecs::imread(path, -1).unwrap(); // Issue over here
+  // let img = imgcodecs::imdecode(&types::VectorOfu8 :: from_iter(buf), imgcodecs::IMREAD_COLOR)?;
+
   let mut gray = Mat::default();
   imgproc::cvt_color(&img, &mut gray, imgproc::COLOR_BGR2GRAY, 0)?;
   let mut faces = types::VectorOfRect::new();
